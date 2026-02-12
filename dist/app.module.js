@@ -24,16 +24,21 @@ exports.AppModule = AppModule = __decorate([
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
-                useFactory: (configService) => ({
-                    type: 'postgres',
-                    host: configService.get('DB_HOST', 'localhost'),
-                    port: configService.get('DB_PORT', 5432),
-                    username: configService.get('DB_USERNAME', 'postgres'),
-                    password: configService.get('DB_PASSWORD', 'postgres'),
-                    database: configService.get('DB_NAME', 'expense_tracker'),
-                    autoLoadEntities: true,
-                    synchronize: configService.get('NODE_ENV') !== 'production',
-                }),
+                useFactory: (configService) => {
+                    const databaseUrl = configService.get('DATABASE_URL');
+                    return {
+                        type: 'postgres',
+                        url: databaseUrl,
+                        host: !databaseUrl ? configService.get('DB_HOST', 'localhost') : undefined,
+                        port: !databaseUrl ? configService.get('DB_PORT', 5432) : undefined,
+                        username: !databaseUrl ? configService.get('DB_USERNAME', 'postgres') : undefined,
+                        password: !databaseUrl ? configService.get('DB_PASSWORD', 'postgres') : undefined,
+                        database: !databaseUrl ? configService.get('DB_NAME', 'expense_tracker') : undefined,
+                        autoLoadEntities: true,
+                        synchronize: configService.get('NODE_ENV') !== 'production',
+                        ssl: databaseUrl ? { rejectUnauthorized: false } : false,
+                    };
+                },
             }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
