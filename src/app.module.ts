@@ -25,7 +25,7 @@ import { BudgetModule } from './budget/budget.module';
           password: !databaseUrl ? configService.get('DB_PASSWORD', 'postgres') : undefined,
           database: !databaseUrl ? configService.get('DB_NAME', 'expense_tracker') : undefined,
           autoLoadEntities: true,
-          synchronize: configService.get('NODE_ENV') !== 'production',
+          synchronize: configService.get('DB_SYNC') === 'true' || configService.get('NODE_ENV') !== 'production',
           ssl: databaseUrl ? { rejectUnauthorized: false } : false,
         };
       },
