@@ -4,4 +4,8 @@ export declare class CreateExpenseDto {
     category: ExpenseCategory;
     isNecessary: boolean;
     date: string;
+    notes?: string;
+    merchant?: string;
+    isRecurring?: boolean;
+    isTaxDeductible?: boolean;
 }

@@ -7,6 +7,10 @@ export declare class Expense {
     amount: number;
     category: ExpenseCategory;
     isNecessary: boolean;
+    notes: string;
+    merchant: string;
+    isRecurring: boolean;
+    isTaxDeductible: boolean;
     date: string;
     createdAt: Date;
 }

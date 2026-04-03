@@ -22,15 +22,22 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
-    async signup(signupDto) {
-        return this.authService.signup(signupDto);
+    async signup(signupDto, response) {
+        const result = await this.authService.signup(signupDto);
+        response.cookie('access_token', result.token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        return { user: result.user };
     }
     async login(loginDto, response) {
         const result = await this.authService.login(loginDto);
         response.cookie('access_token', result.token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            secure: true,
+            sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         return { user: result.user };
@@ -38,8 +45,8 @@ let AuthController = class AuthController {
     async logout(response) {
         response.clearCookie('access_token', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            secure: true,
+            sameSite: 'none',
         });
         return { message: 'Logged out successfully' };
     }
@@ -48,8 +55,9 @@ exports.AuthController = AuthController;
 __decorate([
     (0, common_1.Post)('signup'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [signup_dto_1.SignupDto]),
+    __metadata("design:paramtypes", [signup_dto_1.SignupDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signup", null);
 __decorate([

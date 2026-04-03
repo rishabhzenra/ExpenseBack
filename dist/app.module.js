@@ -14,6 +14,14 @@ const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const expenses_module_1 = require("./expenses/expenses.module");
 const budget_module_1 = require("./budget/budget.module");
+const income_module_1 = require("./income/income.module");
+const savings_goals_module_1 = require("./savings-goals/savings-goals.module");
+const subscriptions_module_1 = require("./subscriptions/subscriptions.module");
+const clients_module_1 = require("./clients/clients.module");
+const invoices_module_1 = require("./invoices/invoices.module");
+const tax_module_1 = require("./tax/tax.module");
+const investments_module_1 = require("./investments/investments.module");
+const seed_module_1 = require("./seed/seed.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,7 +43,7 @@ exports.AppModule = AppModule = __decorate([
                         password: !databaseUrl ? configService.get('DB_PASSWORD', 'postgres') : undefined,
                         database: !databaseUrl ? configService.get('DB_NAME', 'expense_tracker') : undefined,
                         autoLoadEntities: true,
-                        synchronize: configService.get('NODE_ENV') !== 'production',
+                        synchronize: configService.get('DB_SYNC') === 'true' || configService.get('NODE_ENV') !== 'production',
                         ssl: databaseUrl ? { rejectUnauthorized: false } : false,
                     };
                 },
@@ -44,6 +52,14 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             expenses_module_1.ExpensesModule,
             budget_module_1.BudgetModule,
+            income_module_1.IncomeModule,
+            savings_goals_module_1.SavingsGoalsModule,
+            subscriptions_module_1.SubscriptionsModule,
+            clients_module_1.ClientsModule,
+            invoices_module_1.InvoicesModule,
+            tax_module_1.TaxModule,
+            investments_module_1.InvestmentsModule,
+            seed_module_1.SeedModule,
         ],
     })
 ], AppModule);

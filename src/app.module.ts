@@ -5,6 +5,14 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { BudgetModule } from './budget/budget.module';
+import { IncomeModule } from './income/income.module';
+import { SavingsGoalsModule } from './savings-goals/savings-goals.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { ClientsModule } from './clients/clients.module';
+import { InvoicesModule } from './invoices/invoices.module';
+import { TaxModule } from './tax/tax.module';
+import { InvestmentsModule } from './investments/investments.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -14,10 +22,8 @@ import { BudgetModule } from './budget/budget.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const databaseUrl = configService.get('DATABASE_URL');
-
         return {
           type: 'postgres',
-          // If DATABASE_URL exists (Neon), use it. Otherwise, use local variables.
           url: databaseUrl,
           host: !databaseUrl ? configService.get('DB_HOST', 'localhost') : undefined,
           port: !databaseUrl ? configService.get<number>('DB_PORT', 5432) : undefined,
@@ -34,6 +40,14 @@ import { BudgetModule } from './budget/budget.module';
     UsersModule,
     ExpensesModule,
     BudgetModule,
+    IncomeModule,
+    SavingsGoalsModule,
+    SubscriptionsModule,
+    ClientsModule,
+    InvoicesModule,
+    TaxModule,
+    InvestmentsModule,
+    SeedModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -11,6 +11,12 @@ export declare class ExpensesController {
         spentToday: number;
         spentThisWeek: number;
         spentThisMonth: number;
+        spentLastWeek: number;
+        spentLastMonth: number;
+        weekTrend: number;
+        monthTrend: number;
+        healthScore: number;
+        insights: string[];
         categoryBreakdown: {
             category: any;
             total: number;

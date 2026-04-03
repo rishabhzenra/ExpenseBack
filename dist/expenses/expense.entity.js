@@ -20,6 +20,10 @@ let Expense = class Expense {
     amount;
     category;
     isNecessary;
+    notes;
+    merchant;
+    isRecurring;
+    isTaxDeductible;
     date;
     createdAt;
 };
@@ -49,6 +53,22 @@ __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], Expense.prototype, "isNecessary", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, type: 'text' }),
+    __metadata("design:type", String)
+], Expense.prototype, "notes", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Expense.prototype, "merchant", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], Expense.prototype, "isRecurring", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], Expense.prototype, "isTaxDeductible", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'date' }),
     __metadata("design:type", String)

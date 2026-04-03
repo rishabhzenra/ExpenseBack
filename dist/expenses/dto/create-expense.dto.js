@@ -17,6 +17,10 @@ class CreateExpenseDto {
     category;
     isNecessary;
     date;
+    notes;
+    merchant;
+    isRecurring;
+    isTaxDeductible;
 }
 exports.CreateExpenseDto = CreateExpenseDto;
 __decorate([
@@ -36,4 +40,24 @@ __decorate([
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreateExpenseDto.prototype, "date", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateExpenseDto.prototype, "notes", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateExpenseDto.prototype, "merchant", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateExpenseDto.prototype, "isRecurring", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateExpenseDto.prototype, "isTaxDeductible", void 0);
 //# sourceMappingURL=create-expense.dto.js.map

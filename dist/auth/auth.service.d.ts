@@ -7,8 +7,12 @@ export declare class AuthService {
     private readonly jwtService;
     constructor(usersService: UsersService, jwtService: JwtService);
     signup(signupDto: SignupDto): Promise<{
-        id: string;
-        email: string;
+        token: string;
+        user: {
+            id: string;
+            email: string;
+            name: string | undefined;
+        };
     }>;
     login(loginDto: LoginDto): Promise<{
         token: string;

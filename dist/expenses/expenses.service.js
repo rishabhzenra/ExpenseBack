@@ -81,17 +81,33 @@ let ExpensesService = class ExpensesService {
         const weekStart = new Date(now);
         weekStart.setDate(now.getDate() - mondayOffset);
         const weekStartStr = weekStart.toISOString().split('T')[0];
+        const lastWeekStart = new Date(weekStart);
+        lastWeekStart.setDate(weekStart.getDate() - 7);
+        const lastWeekStartStr = lastWeekStart.toISOString().split('T')[0];
+        const lastWeekEnd = new Date(weekStart);
+        lastWeekEnd.setDate(weekStart.getDate() - 1);
+        const lastWeekEndStr = lastWeekEnd.toISOString().split('T')[0];
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
             .toISOString()
             .split('T')[0];
         const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0)
             .toISOString()
             .split('T')[0];
-        const [spentToday, spentThisWeek, spentThisMonth] = await Promise.all([
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+            .toISOString()
+            .split('T')[0];
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0)
+            .toISOString()
+            .split('T')[0];
+        const [spentToday, spentThisWeek, spentThisMonth, spentLastWeek, spentLastMonth,] = await Promise.all([
             this.getSpentInRange(userId, today, today),
             this.getSpentInRange(userId, weekStartStr, today),
             this.getSpentInRange(userId, monthStart, monthEnd),
+            this.getSpentInRange(userId, lastWeekStartStr, lastWeekEndStr),
+            this.getSpentInRange(userId, lastMonthStart, lastMonthEnd),
         ]);
+        const weekTrend = spentLastWeek > 0 ? ((spentThisWeek - spentLastWeek) / spentLastWeek) * 100 : 0;
+        const monthTrend = spentLastMonth > 0 ? ((spentThisMonth - spentLastMonth) / spentLastMonth) * 100 : 0;
         const categoryBreakdown = await this.expensesRepository
             .createQueryBuilder('expense')
             .select('expense.category', 'category')
@@ -103,7 +119,7 @@ let ExpensesService = class ExpensesService {
         })
             .groupBy('expense.category')
             .getRawMany();
-        const necessaryBreakdown = await this.expensesRepository
+        const necessaryBreakdownRaw = await this.expensesRepository
             .createQueryBuilder('expense')
             .select('expense.isNecessary', 'isNecessary')
             .addSelect('COALESCE(SUM(expense.amount), 0)', 'total')
@@ -114,6 +130,10 @@ let ExpensesService = class ExpensesService {
         })
             .groupBy('expense.isNecessary')
             .getRawMany();
+        const necessaryTotal = necessaryBreakdownRaw.find(n => n.isNecessary === true || n.isNecessary === 'true')?.total ?? 0;
+        const unnecessaryTotal = necessaryBreakdownRaw.find(n => n.isNecessary === false || n.isNecessary === 'false')?.total ?? 0;
+        const totalMonth = parseFloat(necessaryTotal) + parseFloat(unnecessaryTotal);
+        const healthScore = totalMonth > 0 ? Math.max(0, 100 - (parseFloat(unnecessaryTotal) / totalMonth) * 100) : 100;
         const dailyBreakdown = await this.expensesRepository
             .createQueryBuilder('expense')
             .select('expense.date', 'date')
@@ -138,15 +158,38 @@ let ExpensesService = class ExpensesService {
             .groupBy('month')
             .orderBy('month', 'ASC')
             .getRawMany();
+        const insights = [];
+        if (weekTrend > 10) {
+            insights.push(`You spent ${weekTrend.toFixed(0)}% more this week than last week.`);
+        }
+        else if (weekTrend < -10) {
+            insights.push(`Great! You spent ${Math.abs(weekTrend).toFixed(0)}% less this week than last week.`);
+        }
+        const highestCategory = categoryBreakdown.sort((a, b) => b.total - a.total)[0];
+        if (highestCategory) {
+            insights.push(`Your highest spending category this month is ${highestCategory.category}.`);
+        }
+        if (unnecessaryTotal > necessaryTotal) {
+            insights.push(`Warning: Your unnecessary spending is higher than your necessary spending!`);
+        }
+        else {
+            insights.push(`Your financial health is good. You're prioritizing necessary expenses.`);
+        }
         return {
             spentToday,
             spentThisWeek,
             spentThisMonth,
+            spentLastWeek,
+            spentLastMonth,
+            weekTrend,
+            monthTrend,
+            healthScore: Math.round(healthScore),
+            insights,
             categoryBreakdown: categoryBreakdown.map((c) => ({
                 category: c.category,
                 total: parseFloat(c.total),
             })),
-            necessaryBreakdown: necessaryBreakdown.map((n) => ({
+            necessaryBreakdown: necessaryBreakdownRaw.map((n) => ({
                 isNecessary: n.isNecessary,
                 total: parseFloat(n.total),
             })),

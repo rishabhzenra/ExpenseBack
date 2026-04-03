@@ -30,6 +30,18 @@ export class Expense {
     @Column({ default: false })
     isNecessary: boolean;
 
+    @Column({ nullable: true, type: 'text' })
+    notes: string;
+
+    @Column({ nullable: true })
+    merchant: string;
+
+    @Column({ default: false })
+    isRecurring: boolean;
+
+    @Column({ default: false })
+    isTaxDeductible: boolean;
+
     @Column({ type: 'date' })
     date: string;
 

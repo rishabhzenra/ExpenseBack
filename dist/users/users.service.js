@@ -35,6 +35,16 @@ let UsersService = class UsersService {
         });
         return this.usersRepository.save(user);
     }
+    async updateOtp(userId, otp, expires) {
+        await this.usersRepository.update(userId, { otp, otpExpires: expires });
+    }
+    async verifyUser(userId) {
+        await this.usersRepository.update(userId, { isVerified: true, otp: undefined, otpExpires: undefined });
+    }
+    async updateProfile(userId, data) {
+        await this.usersRepository.update(userId, data);
+        return this.findById(userId);
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
